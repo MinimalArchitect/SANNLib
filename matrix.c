@@ -19,6 +19,17 @@ free_matrix(matrix *m)
 	free(m);
 }
 
+void
+random_matrix(matrix *m)
+{
+	int i, N;
+
+	N = m->size * m->length;
+	for (i = 0;i < N;i++)
+		m->value[i] = (float) rand() / ((float) RAND_MAX);
+	return;
+}
+
 int
 add_matrix(matrix *a, matrix *b, matrix *o)
 {
@@ -96,8 +107,8 @@ mul_matrix_vector(matrix *m, vector *v, vector *o)
 	if (m->size != o->size
 	|| m->length != v->size)
 		return EXIT_FAILURE;
-	N = v->size;
 	M = o->size;
+	N = v->size;
 	for (j = 0;j < M;j++) {
 		o->value[j] = 0.0f;
 		for (i = 0;i < N;i++)
@@ -107,19 +118,19 @@ mul_matrix_vector(matrix *m, vector *v, vector *o)
 }
 
 int
-mul_matrix_vector_rev(matrix *m, vector *v, vector *o)
+mul_matrix_vector_rev(matrix *m, vector *o, vector *v)
 {
 	int i, j, N, M;
 
 	if (m->size != o->size
 	|| m->length != v->size)
 		return EXIT_FAILURE;
-	N = v->size;
 	M = o->size;
+	N = v->size;
 	for (i = 0;i < N;i++) {
-		o->value[i] = 0.0f;
+		v->value[i] = 0.0f;
 		for (j = 0;j < M;j++)
-			o->value[i] += v->value[j] * m->value[j * M + i];
+			v->value[i] += o->value[j] * m->value[j * N + i];
 	}
 	return EXIT_SUCCESS;
 }

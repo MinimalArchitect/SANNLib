@@ -21,6 +21,17 @@ free_vector(vector *v)
 	return;
 }
 
+void
+random_vector(vector *v)
+{
+	int i, N;
+
+	N = v->size;
+	for (i = 0;i < N;i++)
+		v->value[i] = (float) rand() / ((float) RAND_MAX);
+	return;
+}
+
 int
 add_vector(vector *a, vector *b, vector *o)
 {

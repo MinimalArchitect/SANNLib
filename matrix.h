@@ -12,6 +12,7 @@ typedef struct matrices {
 
 matrix *init_matrix();
 void free_matrix(matrix *);
+void random_matrix(matrix* m);
 int add_matrix(matrix *a, matrix *b, matrix *o);
 int sub_matrix(matrix *a, matrix *b, matrix *o);
 int mul_matrix_scalar(float l, matrix *b, matrix *o);
