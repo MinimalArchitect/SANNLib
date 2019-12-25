@@ -90,7 +90,7 @@ train_model(model *m)
 }
 
 int
-apply_change(model *m)
+apply_change_model(model *m)
 {
 	int i, N;
 	int err = 0;
@@ -111,6 +111,32 @@ apply_change(model *m)
 		/* hidden bias */
 		err |= mul_vector_scalar(m->learning_rate, m->delta[i], m->delta[i]);
 		err |= add_vector(m->bias[i], m->delta[i], m->bias[i]);
+	}
+	return err;
+}
+
+int
+apply_different_change_model(model *m, model *n)
+{
+	int i, N;
+	int err = 0;
+
+	N = m->N;
+	/* input weight */
+	err |= mul_vector(m->delta[0], m->input, n->weight_delta[0]);
+	err |= mul_matrix_scalar(n->learning_rate, n->weight_delta[0], n->weight_delta[0]);
+	err |= add_matrix(n->weight[0], n->weight_delta[0], n->weight[0]);
+	/* input bias */
+	err |= mul_vector_scalar(n->learning_rate, m->delta[0], n->delta[0]);
+	err |= add_vector(m->bias[0], n->delta[0], n->bias[0]);
+	for (i = 1;i < N;i++) {
+		/* hidden weight */
+		err |= mul_vector(m->delta[i], m->hidden[i - 1], n->weight_delta[i]);
+		err |= mul_matrix_scalar(n->learning_rate, n->weight_delta[i], n->weight_delta[i]);
+		err |= add_matrix(n->weight[i], n->weight_delta[i], n->weight[i]);
+		/* hidden bias */
+		err |= mul_vector_scalar(n->learning_rate, m->delta[i], n->delta[i]);
+		err |= add_vector(m->bias[i], n->delta[i], n->bias[i]);
 	}
 	return err;
 }

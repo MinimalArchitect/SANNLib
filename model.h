@@ -28,4 +28,10 @@ model *init_model(int N, float learning_rate, int *layer_size, float (**function
 void random_weights_model(model *m);
 int compute_model(model *m);
 int train_model(model *m);
-int apply_change(model *m);
+int apply_change_model(model *m);
+int apply_different_change_model(model *m, model *n);
+
+/* TODO */
+
+int fetch_state_model();
+int load_state_model();

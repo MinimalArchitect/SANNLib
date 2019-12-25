@@ -33,6 +33,19 @@ random_vector(vector *v)
 }
 
 int
+copy_vector(vector *a, vector *o)
+{
+	int i, N;
+
+	if (a->size != o->size)
+		return EXIT_FAILURE;
+	N = a->size;
+	for (i = 0;i < N;i++)
+		o->value[i] = a->value[i];
+	return EXIT_SUCCESS;
+}
+
+int
 add_vector(vector *a, vector *b, vector *o)
 {
 	int i, N;

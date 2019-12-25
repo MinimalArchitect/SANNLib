@@ -6,6 +6,16 @@
 #include "matrix.h"
 #include "model.h"
 
+typedef struct experiences {
+	int N;
+	vector **state;
+	int action;
+	float reward;
+	vector **state_prediction;
+} experience;
+
+int init_experience(experience *e, model *m);
+
 void
 print_vector(vector *v)
 {
@@ -63,7 +73,7 @@ main(int argc, char *argv[])
 
 		m->target->value[0] = 1.0f;
 		train_model(m);
-		apply_change(m);
+		apply_change_model(m);
 
 //		print_vector(m->hidden[N - 1]);
 	}

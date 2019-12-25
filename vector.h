@@ -9,6 +9,7 @@ typedef struct vectors {
 vector *init_vector(int _size);
 void free_vector(vector *v);
 void random_vector(vector *v);
+int copy_vector(vector *a, vector *o);
 int add_vector(vector *a, vector *b, vector *o);
 int sub_vector(vector *a, vector *b, vector *o);
 int mul_vector_scalar(float l, vector *b, vector *o);
