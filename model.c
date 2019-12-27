@@ -48,7 +48,6 @@ random_weights_model(model *m)
 	for (i = 0;i < N;i++) {
 		random_matrix(m->weight[i]);
 		random_vector(m->bias[i]);
-
 	}
 	return;
 }
