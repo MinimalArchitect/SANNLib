@@ -26,6 +26,7 @@ typedef struct models
 
 model *init_model(int N, float learning_rate, int *layer_size, float (**function) (float), float (**derivative) (float));
 void random_weights_model(model *m);
+int copy_model(model *m, model *n);
 int compute_model(model *m);
 int train_model(model *m);
 int apply_change_model(model *m);
