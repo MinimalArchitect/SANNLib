@@ -9,7 +9,7 @@
 	allocated Matrix
 */
 struct Matrix *
-init_matrix(int size, int length)
+allocate_matrix(int size, int length)
 {
 	struct Matrix *new;
 

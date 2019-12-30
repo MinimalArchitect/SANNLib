@@ -1,38 +1,41 @@
+#ifndef MODEL_H
+#define MODEL_H
+
 #include <stdlib.h>
 
 #include "vector.h"
 #include "matrix.h"
 
-typedef struct models
+struct Model
 {
-	int N;
+	int depth;
 	float learning_rate;
 
-	vector *input;
+	struct Vector *input;
 
-	vector **hidden;
-	vector **temp;
-	vector **delta;
-	vector **bias;
+	struct Vector **hidden;
+	struct Vector **temp;
+	struct Vector **delta;
+	struct Vector **bias;
 
-	vector *target;
+	struct Vector *target;
 
-	matrix **weight;
-	matrix **weight_delta;
+	struct Matrix **weight;
+	struct Matrix **weight_delta;
 
 	float (**function) (float);
 	float (**derivative) (float);
-} model;
+};
 
-model *init_model(int N, float learning_rate, int *layer_size, float (**function) (float), float (**derivative) (float));
-void random_weights_model(model *m);
-int copy_model(model *m, model *n);
-int compute_model(model *m);
-int train_model(model *m);
-int apply_change_model(model *m);
-int apply_different_change_model(model *m, model *n);
+struct Model *allocate_model(int depth, float learning_rate, int *layer_size, float (**function) (float), float (**derivative) (float));
+void free_model(struct Model *m);
+void randomize_model(struct Model *m);
+void copy_model(struct Model *m, struct Model *n);
+void compute_model(struct Model *m);
+void train_model(struct Model *m);
+void apply_change_to_model(struct Model *m);
+void apply_change_to_different_model(struct Model *m, struct Model *n);
+void fetch_state_from_model(struct Model *m, struct Vector **state);
+void load_state_onto_model(struct Model *m, struct Vector **state);
 
-/* TODO */
-
-int fetch_state_model();
-int load_state_model();
+#endif /* MODEL_H */
