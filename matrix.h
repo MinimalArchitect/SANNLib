@@ -2,24 +2,25 @@
 #define MATRIX_H
 
 #include <stdlib.h>
-typedef struct matrices {
+#include "vector.h"
+
+struct Matrix {
 	int size;
 	int length;
 	float *value;
-} matrix;
+};
 
-#include "vector.h"
-
-matrix *init_matrix();
-void free_matrix(matrix *);
-void random_matrix(matrix* m);
-int add_matrix(matrix *a, matrix *b, matrix *o);
-int sub_matrix(matrix *a, matrix *b, matrix *o);
-int mul_matrix_scalar(float l, matrix *b, matrix *o);
-int mul_matrix_had(matrix *a, matrix *b, matrix *o);
-int div_matrix_had(matrix *a, matrix *b, matrix *o);
-int mul_matrix_vector(matrix *m, vector *v, vector *o);
-int mul_matrix_vector_rev(matrix *m, vector *v, vector *o);
-int mul_vector(vector *a, vector *b, matrix *m);
+struct Matrix *allocate_matrix(int size, int length);
+void free_matrix(struct Matrix *m);
+void randomize_matrix(struct Matrix *m);
+void copy_matrix(struct Matrix *a, struct Matrix *out);
+void add_matrix(struct Matrix *a, struct Matrix *b, struct Matrix *out);
+void sub_matrix(struct Matrix *a, struct Matrix *b, struct Matrix *out);
+void mul_scalar_matrix(float l, struct Matrix *b, struct Matrix *out);
+void mul_hadamard_matrix(struct Matrix *a, struct Matrix *b, struct Matrix *out);
+void div_hadamard_matrix(struct Matrix *a, struct Matrix *b, struct Matrix *out);
+void mul_matrix_vector(struct Matrix *m, struct Vector *in, struct Vector *out);
+void mul_matrix_vector_reverse(struct Matrix *m, struct Vector *out, struct Vector *in);
+void mul_vector(struct Vector *a, struct Vector *b, struct Matrix *out);
 
 #endif /* MATRIX_H */

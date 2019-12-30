@@ -1,21 +1,24 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-typedef struct vectors {
+#include <stdlib.h>
+
+struct Vector {
 	float *value;
 	int size;
-} vector;
+};
 
-vector *init_vector(int _size);
-void free_vector(vector *v);
-void random_vector(vector *v);
-int copy_vector(vector *a, vector *o);
-int add_vector(vector *a, vector *b, vector *o);
-int sub_vector(vector *a, vector *b, vector *o);
-int mul_vector_scalar(float l, vector *b, vector *o);
-int mul_vector_had(vector *a, vector *b, vector *o);
-int div_vector_had(vector *a, vector *b, vector *o);
-int function_vector(vector *i, float (*func)(float), vector *o);
-
+struct Vector *allocate_vector(int size);
+void free_vector(struct Vector *v);
+void randomize_vector(struct Vector *v);
+void copy_vector(struct Vector *a, struct Vector *out);
+void add_vector(struct Vector *a, struct Vector *b, struct Vector *out);
+void sub_vector(struct Vector *a, struct Vector *b, struct Vector *out);
+void mul_scalar_vector(float l, struct Vector *b, struct Vector *out);
+void mul_hadamard_vector(struct Vector *a, struct Vector *b, struct Vector *out);
+void div_hadamard_vector(struct Vector *a, struct Vector *b, struct Vector *out);
+void function_vector(struct Vector *a, float (*function)(float), struct Vector *out);
+int max_element(struct Vector *v);
+float max_value(struct Vector *v);
 
 #endif /* VECTOR_H */

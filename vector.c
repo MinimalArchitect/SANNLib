@@ -1,28 +1,47 @@
-#include <stdlib.h>
-
 #include "vector.h"
 
-vector *
-init_vector(int _size)
+/* Precondition:
+	size > 0
+   Sideeffect:
+	None
+   Postcondition:
+	allocated Vector
+*/
+struct Vector *
+allocate_vector(int size)
 {
-	vector *new;
+	struct Vector *new;
 
-	new = (vector *) malloc(sizeof(vector));
-	new->size = _size;
-	new->value = (float *) malloc(sizeof(float) * _size);
+	new = malloc(sizeof(*new));
+	new->size = size;
+	new->value = malloc(sizeof(float) * size);
 	return new;
 }
 
+/* Precondition:
+	previously allocated Vector v
+   Sideeffect:
+	free's allocated Vector v
+   Postcondition:
+	None
+*/
 void
-free_vector(vector *v)
+free_vector(struct Vector *v)
 {
 	free(v->value);
 	free(v);
 	return;
 }
 
+/* Precondition:
+	previously allocated Vector v
+   Sideeffect:
+	v->value[i] == random_value, for i in [0, v->size)
+   Postcondition:
+	None
+*/
 void
-random_vector(vector *v)
+randomize_vector(struct Vector *v)
 {
 	int i, N;
 
@@ -32,96 +51,184 @@ random_vector(vector *v)
 	return;
 }
 
-int
-copy_vector(vector *a, vector *o)
+
+/* Precondition:
+	previously allocated Vector a and out
+	a->size == out->size
+   Sideeffect:
+	a->value[i] == out->value, for i in [0, a->size)
+   Postcondition:
+	None
+*/
+void
+copy_vector(struct Vector *a, struct Vector *out)
 {
 	int i, N;
 
-	if (a->size != o->size)
-		return EXIT_FAILURE;
 	N = a->size;
 	for (i = 0;i < N;i++)
-		o->value[i] = a->value[i];
-	return EXIT_SUCCESS;
+		out->value[i] = a->value[i];
+	return;
 }
 
-int
-add_vector(vector *a, vector *b, vector *o)
+/* Precondition:
+	previously allocated Vector a, b and out
+	a->size == b->size
+	b->size == out->size
+   Sideeffect:
+	out->value[i] == a->value[i] + b->value[i], for i in [0, a->size)
+   Postcondition:
+	None
+*/
+void
+add_vector(struct Vector *a, struct Vector *b, struct Vector *out)
 {
 	int i, N;
 
-	if (a->size != b->size
-	|| a->size != o->size)
-		return EXIT_FAILURE;
 	N = a->size;
 	for (i = 0;i < N;i++)
-		o->value[i] = a->value[i] + b->value[i];
-	return EXIT_SUCCESS;
+		out->value[i] = a->value[i] + b->value[i];
+	return;
 }
 
-int
-sub_vector(vector *a, vector *b, vector *o)
+/* Precondition:
+	previously allocated Vector a, b and out
+	a->size == b->size
+	b->size == out->size
+   Sideeffect:
+	out->value[i] == a->value[i] - b->value[i], for i in [0, a->size)
+   Postcondition:
+	None
+*/
+void
+sub_vector(struct Vector *a, struct Vector *b, struct Vector *out)
 {
 	int i, N;
 
-	if (a->size != b->size
-	|| a->size != o->size)
-		return EXIT_FAILURE;
 	N = a->size;
 	for (i = 0;i < N;i++)
-		o->value[i] = a->value[i] - b->value[i];
-	return EXIT_SUCCESS;
+		out->value[i] = a->value[i] - b->value[i];
+	return;
 }
 
-int
-mul_vector_scalar(float l, vector *a, vector *o)
+/* Precondition:
+	previously allocated Vector a and out
+	a->size == out->size
+   Sideeffect:
+	out->value[i] == l * a->value[i], for i in [0, a->size)
+   Postcondition:
+
+   None
+*/
+void
+mul_scalar_vector(float l, struct Vector *a, struct Vector *out)
 {
 	int i, N;
 
-	if (a->size != o->size)
-		return EXIT_FAILURE;
 	N = a->size;
 	for (i = 0;i < N;i++)
-		o->value[i] = l * a->value[i];
-	return EXIT_SUCCESS;
+		out->value[i] = l * a->value[i];
+	return;
 }
 
-int
-mul_vector_had(vector *a, vector *b, vector *o)
+/* Precondition:
+	previously allocated Vector a, b and out
+	a->size == b->size
+	b->size == out->size
+   Sideeffect:
+   	out->value[i] == a->value[i] * b->value[i], for i in [0, a->size)
+   Postcondition:
+	None
+*/
+void
+mul_hadamard_vector(struct Vector *a, struct Vector *b, struct Vector *out)
 {
 	int i, N;
 
-	if (a->size != b->size
-	|| a->size != o->size)
-		return EXIT_FAILURE;
 	N = a->size;
 	for (i = 0;i < N;i++)
-		o->value[i] = a->value[i] * b->value[i];
-	return EXIT_SUCCESS;
+		out->value[i] = a->value[i] * b->value[i];
+	return;
 }
 
-int
-div_vector_had(vector *a, vector *b, vector *o)
+/* Precondition:
+	previously allocated Vector a, b and out
+	a->size == b->size
+	b->size == out->size
+   Sideeffect:
+	out->value[i] == a->value[i] / b->value[i], for i in [0, a->size)
+   Postcondition:
+	None
+*/
+void
+div_hadamard_vector(struct Vector *a, struct Vector *b, struct Vector *out)
 {
 	int i, N;
 
-	if (a->size != b->size
-	|| a->size != o->size)
-		return EXIT_FAILURE;
 	N = a->size;
 	for (i = 0;i < N;i++)
-		o->value[i] = a->value[i] / b->value[i];
-	return EXIT_SUCCESS;
+		out->value[i] = a->value[i] / b->value[i];
+	return;
 }
 
-int function_vector(vector *a, float (*func)(float), vector *o)
+/* Precondition:
+	previously allocated Vector a and out
+	a->size == out->size
+   Sideeffect:
+	out->value[i] == function(a->value[i]), for i in [0, a->size)
+   Postcondition:
+	None
+*/
+void
+function_vector(struct Vector *a, float (*function)(float), struct Vector *out)
 {
 	int i, N;
 
-	if (a->size != o->size)
-		return EXIT_FAILURE;
 	N = a->size;
 	for (i = 0;i < N;i++)
-		o->value[i] = func(a->value[i]);
-	return EXIT_SUCCESS;
+		out->value[i] = function(a->value[i]);
+	return;
+}
+
+/* Precondition:
+	previously allocated Vector v
+   Sideeffect:
+	None
+   Postcondition:
+	index of maximal element in v-value in [0, v->size)
+*/
+int
+max_element(struct Vector *v)
+{
+	int i, N, max;
+
+	N = v->size;
+	max = 0;
+	for (i = 1;i < N;i++) {
+		if (v->value[i] > v->value[max])
+			max = i;
+	}
+	return max;
+}
+
+/* Precondition:
+	previously allocated Vector v
+   Sideeffect:
+	None
+   Postcondition:
+	value of maximal element in v-value in [0, v->size)
+*/
+float
+max_value(struct Vector *v)
+{
+	int i, N;
+	float max;
+
+	N = v->size;
+	max = v->value[0];
+	for (i = 1;i < N;i++) {
+		if (v->value[i] > max)
+			max = v->value[i];
+	}
+	return max;
 }
