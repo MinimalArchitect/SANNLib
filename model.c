@@ -90,7 +90,7 @@ free_model(struct Model *m)
 	None
 */
 void
-random_weights_model(struct Model *m)
+randomize_model(struct Model *m)
 {
 	int i, depth;
 
