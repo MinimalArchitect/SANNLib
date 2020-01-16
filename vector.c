@@ -12,7 +12,7 @@ allocate_vector(int size)
 
 	new = malloc(sizeof(*new));
 	new->size = size;
-	new->value = malloc(sizeof(float) * size);
+	new->value = malloc(sizeof(real) * size);
 	return new;
 }
 
@@ -37,12 +37,12 @@ free_vector(struct Vector *vector)
 void
 randomize_vector(struct Vector *vector)
 {
-	float *result, *last;
+	real *result, *last;
 
 	result = vector->value;
 	last = vector->value + vector->size;
 	for (;result < last;result++)
-		*result = (float) rand() / ((float) RAND_MAX) * 2.0f - 1.0f;
+		*result = (real) rand() / ((real) RAND_MAX) * 2.0f - 1.0f;
 	return;
 }
 
@@ -56,7 +56,7 @@ randomize_vector(struct Vector *vector)
 void
 copy_vector(struct Vector *source, struct Vector *destination)
 {
-	float *first, *result, *last;
+	real *first, *result, *last;
 
 	first = source->value;
 	result = destination->value;
@@ -75,7 +75,7 @@ copy_vector(struct Vector *source, struct Vector *destination)
 void
 add_vector(struct Vector *first_summand, struct Vector *second_summand, struct Vector *sum)
 {
-	float *first, *second, *result, *last;
+	real *first, *second, *result, *last;
 
 	first = first_summand->value;
 	second = second_summand->value;
@@ -95,7 +95,7 @@ add_vector(struct Vector *first_summand, struct Vector *second_summand, struct V
 void
 subtract_vector(struct Vector *minuend, struct Vector *subtrahend, struct Vector *difference)
 {
-	float *first, *second, *result, *last;
+	real *first, *second, *result, *last;
 
 	first = minuend->value;
 	second = subtrahend->value;
@@ -113,9 +113,9 @@ subtract_vector(struct Vector *minuend, struct Vector *subtrahend, struct Vector
 	scaled_vector->value[i] == scalar * vector->value[i], for i in [0..scaled_vector->size - 1]
 */
 void
-scale_vector(float scalar, struct Vector *vector, struct Vector *scaled_vector)
+scale_vector(real scalar, struct Vector *vector, struct Vector *scaled_vector)
 {
-	float *first, *result, *last;
+	real *first, *result, *last;
 
 	first = vector->value;
 	result = scaled_vector->value;
@@ -134,7 +134,7 @@ scale_vector(float scalar, struct Vector *vector, struct Vector *scaled_vector)
 void
 multiply_vector_entrywise(struct Vector *first_factor, struct Vector *second_factor, struct Vector *product)
 {
-	float *first, *second, *result, *last;
+	real *first, *second, *result, *last;
 
 	first = first_factor->value;
 	second = second_factor->value;
@@ -154,7 +154,7 @@ multiply_vector_entrywise(struct Vector *first_factor, struct Vector *second_fac
 void
 divide_vector_entrywise(struct Vector *dividend, struct Vector *divisor, struct Vector *quotient)
 {
-	float *first, *second, *result, *last;
+	real *first, *second, *result, *last;
 
 	first = dividend->value;
 	second = divisor->value;
@@ -172,9 +172,9 @@ divide_vector_entrywise(struct Vector *dividend, struct Vector *divisor, struct 
 	output->value[i] == function(input->value[i]), for i in [0..output->size - 1]
 */
 void
-apply_function_on_vector(struct Vector *input, float (*function)(float), struct Vector *output)
+apply_function_on_vector(struct Vector *input, real (*function)(real), struct Vector *output)
 {
-	float *first, *result, *last;
+	real *first, *result, *last;
 
 	first = input->value;
 	result = output->value;
@@ -192,7 +192,7 @@ apply_function_on_vector(struct Vector *input, float (*function)(float), struct 
 int
 search_max_element(struct Vector *vector)
 {
-	float *index, *last, *maximum;
+	real *index, *last, *maximum;
 
 	maximum = vector->value;
 	index = vector->value + 1;
@@ -209,10 +209,10 @@ search_max_element(struct Vector *vector)
    Postcondition:
 	max(vector->value[i]), for i in [0..vector->size - 1]
 */
-float
+real
 search_max_value(struct Vector *vector)
 {
-	float *index, *last, *maximum;
+	real *index, *last, *maximum;
 
 	maximum = vector->value;
 	index = vector->value + 1;
@@ -232,7 +232,7 @@ search_max_value(struct Vector *vector)
 void
 set_vector_zero(struct Vector *vector)
 {
-	float *result, *last;
+	real *result, *last;
 
 	result = vector->value;
 	last = vector->value + vector->size;

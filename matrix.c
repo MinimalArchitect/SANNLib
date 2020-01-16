@@ -14,7 +14,7 @@ allocate_matrix(int size, int length)
 	new = malloc(sizeof(*new));
 	new->size = size;
 	new->length = length;
-	new->value = malloc(sizeof(float) * length * size);
+	new->value = malloc(sizeof(real) * length * size);
 	return new;
 }
 
@@ -38,12 +38,12 @@ free_matrix(struct Matrix *matrix)
 void
 randomize_matrix(struct Matrix *matrix)
 {
-	float *result, *last;
+	real *result, *last;
 
 	result = matrix->value;
 	last = matrix->value + matrix->size * matrix->length;
 	for (;result < last;result++)
-		*result = (float) rand() / ((float) RAND_MAX) * 2.0f - 1.0f;
+		*result = (real) rand() / ((real) RAND_MAX) * 2.0f - 1.0f;
 	return;
 }
 
@@ -57,7 +57,7 @@ randomize_matrix(struct Matrix *matrix)
 void
 copy_matrix(struct Matrix *source, struct Matrix *destination)
 {
-	float *first, *result, *last;
+	real *first, *result, *last;
 
 	first = source->value;
 	result = destination->value;
@@ -77,7 +77,7 @@ copy_matrix(struct Matrix *source, struct Matrix *destination)
 void
 add_matrix(struct Matrix *first_summand, struct Matrix *second_summand, struct Matrix *sum)
 {
-	float *first, *second, *result, *last;
+	real *first, *second, *result, *last;
 
 	first = first_summand->value;
 	second = second_summand->value;
@@ -98,7 +98,7 @@ add_matrix(struct Matrix *first_summand, struct Matrix *second_summand, struct M
 void
 subtract_matrix(struct Matrix *minuend, struct Matrix *subtrahend, struct Matrix *difference)
 {
-	float *first, *second, *result, *last;
+	real *first, *second, *result, *last;
 
 	first = minuend->value;
 	second = subtrahend->value;
@@ -117,9 +117,9 @@ subtract_matrix(struct Matrix *minuend, struct Matrix *subtrahend, struct Matrix
 	scaled_matrix->value[i] == scalar * matrix->value[i], for i in [0..scaled_matrix->size * scaled_matrix->length - 1]
 */
 void
-scale_matrix(float scalar, struct Matrix *matrix, struct Matrix *scaled_matrix)
+scale_matrix(real scalar, struct Matrix *matrix, struct Matrix *scaled_matrix)
 {
-	float *first, *result, *last;
+	real *first, *result, *last;
 
 	first = matrix->value;
 	result = scaled_matrix->value;
@@ -139,7 +139,7 @@ scale_matrix(float scalar, struct Matrix *matrix, struct Matrix *scaled_matrix)
 void
 multiply_matrix_entrywise(struct Matrix *first_factor, struct Matrix *second_factor, struct Matrix *product)
 {
-	float *first, *second, *result, *last;
+	real *first, *second, *result, *last;
 
 	first = first_factor->value;
 	second = second_factor->value;
@@ -160,7 +160,7 @@ multiply_matrix_entrywise(struct Matrix *first_factor, struct Matrix *second_fac
 void
 divide_matrix_entrywise(struct Matrix *dividend, struct Matrix *divisor, struct Matrix *quotient)
 {
-	float *first, *second, *result, *last;
+	real *first, *second, *result, *last;
 
 	first = dividend->value;
 	second = divisor->value;
@@ -181,7 +181,7 @@ divide_matrix_entrywise(struct Matrix *dividend, struct Matrix *divisor, struct 
 void
 multiply_matrix_vector(struct Matrix *matrix, struct Vector *vector, struct Vector *product)
 {
-	float *first, *second, *result, *N, *M;
+	real *first, *second, *result, *N, *M;
 
 	first = matrix->value;
 	N = vector->value + vector->size;
@@ -204,7 +204,7 @@ multiply_matrix_vector(struct Matrix *matrix, struct Vector *vector, struct Vect
 void
 multiply_transformed_matrix_vector(struct Matrix *matrix, struct Vector *vector, struct Vector *product)
 {
-	float *first, *second, *result, *N, *M;
+	real *first, *second, *result, *N, *M;
 	int j, size;
 
 	second = matrix->value;
@@ -229,7 +229,7 @@ multiply_transformed_matrix_vector(struct Matrix *matrix, struct Vector *vector,
 void
 multiply_vector(struct Vector *first_factor, struct Vector *second_factor, struct Matrix *product)
 {
-	float *first, *second, *result, *N, *M;
+	real *first, *second, *result, *N, *M;
 
 	result = product->value;
 	N = first_factor->value + first_factor->size;
