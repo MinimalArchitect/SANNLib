@@ -2,10 +2,8 @@
 
 /* Precondition:
 	size > 0
-   Sideeffect:
-	None
    Postcondition:
-	allocated Vector
+	allocated struct Vector
 */
 struct Vector *
 allocate_vector(int size)
@@ -19,216 +17,226 @@ allocate_vector(int size)
 }
 
 /* Precondition:
-	previously allocated Vector v
-   Sideeffect:
-	free's allocated Vector v
+	previously allocated vector
    Postcondition:
-	None
+	free's allocated Vector vector
 */
 void
-free_vector(struct Vector *v)
+free_vector(struct Vector *vector)
 {
-	free(v->value);
-	free(v);
+	free(vector->value);
+	free(vector);
 	return;
 }
 
 /* Precondition:
-	previously allocated Vector v
-   Sideeffect:
-	v->value[i] == random_value, for i in [0, v->size)
+	previously allocated vector
    Postcondition:
-	None
+	vector->value[i] == random_value, for i in [0..vector->size - 1]
 */
 void
-randomize_vector(struct Vector *v)
+randomize_vector(struct Vector *vector)
 {
-	int i, N;
+	float *result, *last;
 
-	N = v->size;
-	for (i = 0;i < N;i++)
-		v->value[i] = (float) rand() / ((float) RAND_MAX);
+	result = vector->value;
+	last = vector->value + vector->size;
+	for (;result < last;result++)
+		*result = (float) rand() / ((float) RAND_MAX) * 2.0f - 1.0f;
 	return;
 }
 
 
 /* Precondition:
-	previously allocated Vector a and out
-	a->size == out->size
-   Sideeffect:
-	a->value[i] == out->value, for i in [0, a->size)
+	previously allocated source and destination
+	destination->size == source->size
    Postcondition:
-	None
+	destination->value[i] == source->value[i], for i in [0..destination->size - 1]
 */
 void
-copy_vector(struct Vector *a, struct Vector *out)
+copy_vector(struct Vector *source, struct Vector *destination)
 {
-	int i, N;
+	float *first, *result, *last;
 
-	N = a->size;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i];
+	first = source->value;
+	result = destination->value;
+	last = destination->value + destination->size;
+	for (;result < last;result++, first++)
+		*result = *first;
 	return;
 }
 
 /* Precondition:
-	previously allocated Vector a, b and out
-	a->size == b->size
-	b->size == out->size
-   Sideeffect:
-	out->value[i] == a->value[i] + b->value[i], for i in [0, a->size)
+	previously allocated first_summand, second_summand and sum
+	first_summand->size == second_summand->size == sum->size
    Postcondition:
-	None
+	sum->value[i] == first_summand->value[i] + second_summand->value[i], for i in [0, sum->size - 1]
 */
 void
-add_vector(struct Vector *a, struct Vector *b, struct Vector *out)
+add_vector(struct Vector *first_summand, struct Vector *second_summand, struct Vector *sum)
 {
-	int i, N;
+	float *first, *second, *result, *last;
 
-	N = a->size;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i] + b->value[i];
+	first = first_summand->value;
+	second = second_summand->value;
+	result = sum->value;
+	last = sum->value + sum->size;
+	for (;result < last;result++, first++, second++)
+		*result = *first + *second;
 	return;
 }
 
 /* Precondition:
-	previously allocated Vector a, b and out
-	a->size == b->size
-	b->size == out->size
-   Sideeffect:
-	out->value[i] == a->value[i] - b->value[i], for i in [0, a->size)
+	previously allocated minuend, subtrahend and difference
+	minuend->size == subtrahend->size == difference->size
    Postcondition:
-	None
+	difference->value[i] == minuend->value[i] - subtrahend->value[i], for i in [0..difference->size - 1]
 */
 void
-sub_vector(struct Vector *a, struct Vector *b, struct Vector *out)
+subtract_vector(struct Vector *minuend, struct Vector *subtrahend, struct Vector *difference)
 {
-	int i, N;
+	float *first, *second, *result, *last;
 
-	N = a->size;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i] - b->value[i];
+	first = minuend->value;
+	second = subtrahend->value;
+	result = difference->value;
+	last = difference->value + difference->size;
+	for (;result < last;result++, first++, second++)
+		*result = *first - *second;
 	return;
 }
 
 /* Precondition:
-	previously allocated Vector a and out
-	a->size == out->size
-   Sideeffect:
-	out->value[i] == l * a->value[i], for i in [0, a->size)
+	previously allocated vector and scaled_vector
+	vector->size == scaled_vector->size
    Postcondition:
-
-   None
+	scaled_vector->value[i] == scalar * vector->value[i], for i in [0..scaled_vector->size - 1]
 */
 void
-mul_scalar_vector(float l, struct Vector *a, struct Vector *out)
+scale_vector(float scalar, struct Vector *vector, struct Vector *scaled_vector)
 {
-	int i, N;
+	float *first, *result, *last;
 
-	N = a->size;
-	for (i = 0;i < N;i++)
-		out->value[i] = l * a->value[i];
+	first = vector->value;
+	result = scaled_vector->value;
+	last = scaled_vector->value + scaled_vector->size;
+	for (;result < last;result++, first++)
+		*result = scalar * *first;
 	return;
 }
 
 /* Precondition:
-	previously allocated Vector a, b and out
-	a->size == b->size
-	b->size == out->size
-   Sideeffect:
-   	out->value[i] == a->value[i] * b->value[i], for i in [0, a->size)
+	previously allocated first_factor, second_factor and product
+	first_factor->size == second_factor->size == product->size
    Postcondition:
-	None
+   	product->value[i] == first_factor->value[i] * second_factor->value[i], for i in [0..product->size - 1]
 */
 void
-mul_hadamard_vector(struct Vector *a, struct Vector *b, struct Vector *out)
+multiply_vector_entrywise(struct Vector *first_factor, struct Vector *second_factor, struct Vector *product)
 {
-	int i, N;
+	float *first, *second, *result, *last;
 
-	N = a->size;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i] * b->value[i];
+	first = first_factor->value;
+	second = second_factor->value;
+	result = product->value;
+	last = product->value + product->size;
+	for (;result < last;result++, first++, second++)
+		*result = *first * *second;
 	return;
 }
 
 /* Precondition:
-	previously allocated Vector a, b and out
-	a->size == b->size
-	b->size == out->size
-   Sideeffect:
-	out->value[i] == a->value[i] / b->value[i], for i in [0, a->size)
+	previously allocated dividend, divisor and quotient
+	dividend->size == divisor->size == quotient->size
    Postcondition:
-	None
+	quotient->value[i] == dividend->value[i] / divisor->value[i], for i in [0..quotient->size - 1]
 */
 void
-div_hadamard_vector(struct Vector *a, struct Vector *b, struct Vector *out)
+divide_vector_entrywise(struct Vector *dividend, struct Vector *divisor, struct Vector *quotient)
 {
-	int i, N;
+	float *first, *second, *result, *last;
 
-	N = a->size;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i] / b->value[i];
+	first = dividend->value;
+	second = divisor->value;
+	result = quotient->value;
+	last = quotient->value + quotient->size;
+	for (;result < last;result++, first++, second++)
+		*result = *first / *second;
 	return;
 }
 
 /* Precondition:
-	previously allocated Vector a and out
-	a->size == out->size
-   Sideeffect:
-	out->value[i] == function(a->value[i]), for i in [0, a->size)
+	previously allocated input and output
+	input->size == output->size
    Postcondition:
-	None
+	output->value[i] == function(input->value[i]), for i in [0..output->size - 1]
 */
 void
-function_vector(struct Vector *a, float (*function)(float), struct Vector *out)
+apply_function_on_vector(struct Vector *input, float (*function)(float), struct Vector *output)
 {
-	int i, N;
+	float *first, *result, *last;
 
-	N = a->size;
-	for (i = 0;i < N;i++)
-		out->value[i] = function(a->value[i]);
+	first = input->value;
+	result = output->value;
+	last = output->value + output->size;
+	for (;result < last;result++, first++)
+		*result = function(*first);
 	return;
 }
 
 /* Precondition:
-	previously allocated Vector v
-   Sideeffect:
-	None
+	previously allocated vector
    Postcondition:
-	index of maximal element in v-value in [0, v->size)
+	i, with max(vector->value[i]), for in vector->value in [0..vector->size - 1]
 */
 int
-max_element(struct Vector *v)
+search_max_element(struct Vector *vector)
 {
-	int i, N, max;
+	float *index, *last, *maximum;
 
-	N = v->size;
-	max = 0;
-	for (i = 1;i < N;i++) {
-		if (v->value[i] > v->value[max])
-			max = i;
+	maximum = vector->value;
+	index = vector->value + 1;
+	last = vector->value + vector->size;
+	for (;index < last;index++) {
+		if (*index > *maximum)
+			maximum = index;
 	}
-	return max;
+	return maximum - vector->value;
 }
 
 /* Precondition:
-	previously allocated Vector v
-   Sideeffect:
-	None
+	previously allocated vector
    Postcondition:
-	value of maximal element in v-value in [0, v->size)
+	max(vector->value[i]), for i in [0..vector->size - 1]
 */
 float
-max_value(struct Vector *v)
+search_max_value(struct Vector *vector)
 {
-	int i, N;
-	float max;
+	float *index, *last, *maximum;
 
-	N = v->size;
-	max = v->value[0];
-	for (i = 1;i < N;i++) {
-		if (v->value[i] > max)
-			max = v->value[i];
+	maximum = vector->value;
+	index = vector->value + 1;
+	last = vector->value + vector->size;
+	for (;index < last;index++) {
+		if (*index > *maximum)
+			maximum = index;
 	}
-	return max;
+	return *maximum;
+}
+
+/* Precondition:
+	previously allocated vector
+   Postcondition:
+	vector->value[i] == 0.0f, for i in [0..vector->size - 1]
+*/
+void
+set_vector_zero(struct Vector *vector)
+{
+	float *result, *last;
+
+	result = vector->value;
+	last = vector->value + vector->size;
+	for(;result < last;result++)
+		*result = 0.0f;
+	return;
 }

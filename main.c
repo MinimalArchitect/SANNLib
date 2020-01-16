@@ -17,17 +17,17 @@ init_model(struct Model *model)
 	case 1:
 		model->input->value[0] = 0.0f;
 		model->input->value[1] = 1.0f;
-		model->target->value[0] = 0.0f;
+		model->target->value[0] = 1.0f;
 		break;
 	case 2:
 		model->input->value[0] = 1.0f;
 		model->input->value[1] = 0.0f;
-		model->target->value[0] = 0.0f;
+		model->target->value[0] = 1.0f;
 		break;
 	case 3:
 		model->input->value[0] = 1.0f;
 		model->input->value[1] = 1.0f;
-		model->target->value[0] = 1.0f;
+		model->target->value[0] = 0.0f;
 		break;
 	}
 	return;
@@ -40,17 +40,18 @@ float ReLu(float value)
 
 float DReLu(float value)
 {
-	return (value > 0.0f)?1.0f:-0.01f;
+	return (value > 0.0f)?1.0f:0.01f;
 }
 
 int main(int argc, char *argv[])
 {
 	int depth = 3;
-	float learning_rate = 0.001;
+	float learning_rate = 0.01f;
 
-	int layer_size[] = {2, 2, 2, 1};
+	int layer_size[] = {2, 10, 10, 1};
 
 	float (*function_array[]) (float) = {ReLu, ReLu, ReLu};
+
 	float (*derivative_array[]) (float) = {DReLu, DReLu, DReLu};
 
 	struct Model *model = allocate_model(depth, learning_rate, layer_size, function_array, derivative_array);
@@ -66,7 +67,7 @@ int main(int argc, char *argv[])
 		train_model(model);
 		apply_change_to_model(model);
 
-		printf("%f - %f\n", model->hidden[depth - 1]->value[0], model->target->value[0]);
+		printf("%4d: %2.3f - %2.3f\n", t, model->hidden[depth - 1]->value[0], model->target->value[0]);
 	}
 
 	exit(EXIT_SUCCESS);

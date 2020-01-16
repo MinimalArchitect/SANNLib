@@ -142,13 +142,13 @@ compute_model(struct Model *m)
 	int i, depth;
 
 	depth = m->depth;
-	mul_matrix_vector(m->weight[0], m->input, m->hidden[0]);
+	multiply_matrix_vector(m->weight[0], m->input, m->hidden[0]);
 	add_vector(m->bias[0], m->hidden[0], m->hidden[0]);
-	function_vector(m->hidden[0], m->function[0], m->hidden[0]);
+	apply_function_on_vector(m->hidden[0], m->function[0], m->hidden[0]);
 	for (i = 1;i < depth;i++) {
-		mul_matrix_vector(m->weight[i], m->hidden[i - 1], m->hidden[i]);
+		multiply_matrix_vector(m->weight[i], m->hidden[i - 1], m->hidden[i]);
 		add_vector(m->bias[i], m->hidden[i], m->hidden[i]);
-		function_vector(m->hidden[i], m->function[i], m->hidden[i]);
+		apply_function_on_vector(m->hidden[i], m->function[i], m->hidden[i]);
 	}
 	return;
 }
@@ -169,14 +169,14 @@ train_model(struct Model *m)
 
 	depth = m->depth;
 	/* output layer delta */
-	sub_vector(m->target, m->hidden[depth - 1], m->delta[depth - 1]);
-	function_vector(m->hidden[depth - 1], m->derivative[depth - 1], m->temp[depth - 1]);
-	mul_hadamard_vector(m->delta[depth - 1], m->temp[depth - 1], m->delta[depth - 1]);
+	subtract_vector(m->target, m->hidden[depth - 1], m->delta[depth - 1]);
+	apply_function_on_vector(m->hidden[depth - 1], m->derivative[depth - 1], m->temp[depth - 1]);
+	multiply_vector_entrywise(m->delta[depth - 1], m->temp[depth - 1], m->delta[depth - 1]);
 	/* hidden layer delta */
 	for (i = depth - 2;i >= 0;i--) {
-		mul_matrix_vector_reverse(m->weight[i + 1], m->delta[i + 1], m->delta[i]);
-		function_vector(m->hidden[i], m->derivative[i], m->temp[i]);
-		mul_hadamard_vector(m->delta[i], m->temp[i], m->delta[i]);
+		multiply_transformed_matrix_vector(m->weight[i + 1], m->delta[i + 1], m->delta[i]);
+		apply_function_on_vector(m->hidden[i], m->derivative[i], m->temp[i]);
+		multiply_vector_entrywise(m->delta[i], m->temp[i], m->delta[i]);
 	}
 	return;
 }
@@ -198,19 +198,19 @@ apply_change_to_model(struct Model *m)
 
 	depth = m->depth;
 	/* input weight */
-	mul_vector(m->delta[0], m->input, m->weight_delta[0]);
-	mul_scalar_matrix(m->learning_rate, m->weight_delta[0], m->weight_delta[0]);
+	multiply_vector(m->delta[0], m->input, m->weight_delta[0]);
+	scale_matrix(m->learning_rate, m->weight_delta[0], m->weight_delta[0]);
 	add_matrix(m->weight[0], m->weight_delta[0], m->weight[0]);
 	/* input bias */
-	mul_scalar_vector(m->learning_rate, m->delta[0], m->delta[0]);
+	scale_vector(m->learning_rate, m->delta[0], m->delta[0]);
 	add_vector(m->bias[0], m->delta[0], m->bias[0]);
 	for (i = 1;i < depth;i++) {
 		/* hidden weight */
-		mul_vector(m->delta[i], m->hidden[i - 1], m->weight_delta[i]);
-		mul_scalar_matrix(m->learning_rate, m->weight_delta[i], m->weight_delta[i]);
+		multiply_vector(m->delta[i], m->hidden[i - 1], m->weight_delta[i]);
+		scale_matrix(m->learning_rate, m->weight_delta[i], m->weight_delta[i]);
 		add_matrix(m->weight[i], m->weight_delta[i], m->weight[i]);
 		/* hidden bias */
-		mul_scalar_vector(m->learning_rate, m->delta[i], m->delta[i]);
+		scale_vector(m->learning_rate, m->delta[i], m->delta[i]);
 		add_vector(m->bias[i], m->delta[i], m->bias[i]);
 	}
 	return;
@@ -242,19 +242,19 @@ apply_different_change_model(struct Model *m, struct Model *n)
 
 	depth = m->depth;
 	/* input weight */
-	mul_vector(m->delta[0], m->input, n->weight_delta[0]);
-	mul_scalar_matrix(n->learning_rate, n->weight_delta[0], n->weight_delta[0]);
+	multiply_vector(m->delta[0], m->input, n->weight_delta[0]);
+	scale_matrix(n->learning_rate, n->weight_delta[0], n->weight_delta[0]);
 	add_matrix(n->weight[0], n->weight_delta[0], n->weight[0]);
 	/* input bias */
-	mul_scalar_vector(n->learning_rate, m->delta[0], n->delta[0]);
+	scale_vector(n->learning_rate, m->delta[0], n->delta[0]);
 	add_vector(m->bias[0], n->delta[0], n->bias[0]);
 	for (i = 1;i < depth;i++) {
 		/* hidden weight */
-		mul_vector(m->delta[i], m->hidden[i - 1], n->weight_delta[i]);
-		mul_scalar_matrix(n->learning_rate, n->weight_delta[i], n->weight_delta[i]);
+		multiply_vector(m->delta[i], m->hidden[i - 1], n->weight_delta[i]);
+		scale_matrix(n->learning_rate, n->weight_delta[i], n->weight_delta[i]);
 		add_matrix(n->weight[i], n->weight_delta[i], n->weight[i]);
 		/* hidden bias */
-		mul_scalar_vector(n->learning_rate, m->delta[i], n->delta[i]);
+		scale_vector(n->learning_rate, m->delta[i], n->delta[i]);
 		add_vector(m->bias[i], n->delta[i], n->bias[i]);
 	}
 	return;

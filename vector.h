@@ -9,16 +9,17 @@ struct Vector {
 };
 
 struct Vector *allocate_vector(int size);
-void free_vector(struct Vector *v);
-void randomize_vector(struct Vector *v);
-void copy_vector(struct Vector *a, struct Vector *out);
-void add_vector(struct Vector *a, struct Vector *b, struct Vector *out);
-void sub_vector(struct Vector *a, struct Vector *b, struct Vector *out);
-void mul_scalar_vector(float l, struct Vector *b, struct Vector *out);
-void mul_hadamard_vector(struct Vector *a, struct Vector *b, struct Vector *out);
-void div_hadamard_vector(struct Vector *a, struct Vector *b, struct Vector *out);
-void function_vector(struct Vector *a, float (*function)(float), struct Vector *out);
-int max_element(struct Vector *v);
-float max_value(struct Vector *v);
+void free_vector(struct Vector *vector);
+void randomize_vector(struct Vector *vector);
+void copy_vector(struct Vector *source, struct Vector *destination);
+void add_vector(struct Vector *first_summand, struct Vector *second_summand, struct Vector *sum);
+void subtract_vector(struct Vector *minuend, struct Vector *subtrahend, struct Vector *difference);
+void scale_vector(float scalar, struct Vector *vector, struct Vector *scaled_vector);
+void multiply_vector_entrywise(struct Vector *first_factor, struct Vector *second_factor, struct Vector *product);
+void divide_vector_entrywise(struct Vector *dividend, struct Vector *divisor, struct Vector *quotient);
+void apply_function_on_vector(struct Vector *input, float (*function)(float), struct Vector *output);
+int search_max_element(struct Vector *vector);
+float search_max_value(struct Vector *vector);
+void set_vector_zero(struct Vector *vector);
 
 #endif /* VECTOR_H */

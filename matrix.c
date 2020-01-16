@@ -3,10 +3,8 @@
 /* Precondition:
 	size > 0
 	length > 0
-   Sideeffect:
-	None
    Postcondition:
-	allocated Matrix
+	allocated struct Matrix
 */
 struct Matrix *
 allocate_matrix(int size, int length)
@@ -16,240 +14,229 @@ allocate_matrix(int size, int length)
 	new = malloc(sizeof(*new));
 	new->size = size;
 	new->length = length;
-	new->value = malloc(sizeof(int) * (length * size));
+	new->value = malloc(sizeof(float) * length * size);
 	return new;
 }
 
 /* Precondition:
-	previously allocated Matrix m
-   Sideeffect:
-	free's allocated Matrix m
+	previously allocated matrix
    Postcondition:
-	None
+	free's allocated matrix
 */
 void
-free_matrix(struct Matrix *m)
+free_matrix(struct Matrix *matrix)
 {
-	free(m->value);
-	free(m);
+	free(matrix->value);
+	free(matrix);
 }
 
 /* Precondition:
-	previously allocated Matrix m
-   Sideeffect:
-	m->value[i] == random_value, for i in [0, m->size * m->length)
+	previously allocated matrix
    Postcondition:
-	None
+	matrix->value[i] == random_value, for i in [0..matrix->size * matrix->length - 1]
 */
 void
-randomize_matrix(struct Matrix *m)
+randomize_matrix(struct Matrix *matrix)
 {
-	int i, N;
+	float *result, *last;
 
-	N = m->size * m->length;
-	for (i = 0;i < N;i++)
-		m->value[i] = (float) rand() / ((float) RAND_MAX);
+	result = matrix->value;
+	last = matrix->value + matrix->size * matrix->length;
+	for (;result < last;result++)
+		*result = (float) rand() / ((float) RAND_MAX) * 2.0f - 1.0f;
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix a and out
-	a->size == out->size
-	a->length == out->length
-   Sideeffect:
-	out->value[i] == a->value[i], for i in [0, a->size * a->length)
+	previously allocated source and destination
+	source->size == destination->size
+	source->length == destination->length
    Postcondition:
-	None
+	destination->value[i] == source->value[i], for i in [0..a->size * a->length - 1]
 */
 void
-copy_matrix(struct Matrix *a, struct Matrix *out)
+copy_matrix(struct Matrix *source, struct Matrix *destination)
 {
-	int i, N;
+	float *first, *result, *last;
 
-	N = a->size * a->length;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i];
+	first = source->value;
+	result = destination->value;
+	last = destination->value + destination->size * destination->length;
+	for (;result < last;result++, first++)
+		*result = *first;
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix a, b and out
-	a->size == b->size
-	b->size == out->size
-	a->length == b->length
-	b->length == out->length
-   Sideeffect:
-	out->value[i] == a->value[i] + b->value[i], for i in [0, a->size * a->length)
+	previously allocated first_summand, second_summand and sum
+	first_summand->size == second_summand->size == sum->size
+	first_summand->length == second_summand->length == sum->length
    Postcondition:
-	None
+	sum->value[i] == first_summand->value[i] + second_summand->value[i], for i in [0..sum->size * sum->length - 1]
 */
 void
-add_matrix(struct Matrix *a, struct Matrix *b, struct Matrix *out)
+add_matrix(struct Matrix *first_summand, struct Matrix *second_summand, struct Matrix *sum)
 {
-	int i, N;
+	float *first, *second, *result, *last;
 
-	N = a->size * a->length;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i] + b->value[i];
+	first = first_summand->value;
+	second = second_summand->value;
+	result = sum->value;
+	last = sum->value + sum->size * sum->length;
+	for (;result < last;result++, first++, second++)
+		*result = *first + *second;
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix a, b and out
-	a->size == b->size
-	b->size == out->size
-	a->length == b->length
-	b->length == out->length
-   Sideeffect:
-	out->value[i] == a->value[i] - b->value[i], for i in [0, a->size * a->length)
+	previously allocated minuend, subtrahend and difference
+	minuend->size == subtrahend->size == difference->size
+	minuend->length == subtrahend->length == difference->length
    Postcondition:
-	None
+	difference->value[i] == minuend->value[i] - subtrahend->value[i], for i in [0..difference->size * difference->length - 1]
 */
 void
-sub_matrix(struct Matrix *a, struct Matrix *b, struct Matrix *out)
+subtract_matrix(struct Matrix *minuend, struct Matrix *subtrahend, struct Matrix *difference)
 {
-	int i, N;
+	float *first, *second, *result, *last;
 
-	N = a->size * a->length;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i] - b->value[i];
+	first = minuend->value;
+	second = subtrahend->value;
+	result = difference->value;
+	last = difference->value + difference->size * difference->length;
+	for (;result < last;result++, first++, second++)
+		*result = *first - *second;
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix a and out
-	a->size == out->size
-	a->length == out->length
-   Sideeffect:
-	out->value[i] == l * a->value[i], for i in [0, a->size * a->length)
+	previously allocated Matrix matrix and scaled_matrix
+	matrix->size == scaled_matrix->size
+	matrix->length == scaled_matrix->length
    Postcondition:
-	None
+	scaled_matrix->value[i] == scalar * matrix->value[i], for i in [0..scaled_matrix->size * scaled_matrix->length - 1]
 */
 void
-mul_scalar_matrix(float l, struct Matrix *a, struct Matrix *out)
+scale_matrix(float scalar, struct Matrix *matrix, struct Matrix *scaled_matrix)
 {
-	int i, N;
+	float *first, *result, *last;
 
-	N = a->size * a->length;
-	for (i = 0;i < N;i++)
-		out->value[i] = l * a->value[i];
+	first = matrix->value;
+	result = scaled_matrix->value;
+	last = scaled_matrix->value + scaled_matrix->size * scaled_matrix->length;
+	for (;result < last;result++, first++)
+		*result = scalar * *first;
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix a, b and out
-	a->size == b->size
-	b->size == out->size
-	a->length == b->length
-	b->length == out->length
-   Sideeffect:
-	out->value[i] == a->value[i] * b->value[i], for i in [0, a->size * a->length)
+	previously allocated Matrix first_factor, second_factor and product
+	first_factor->size == second_factor->size == product->size
+	first_factor->length == second_factor->length == product->length
    Postcondition:
-	None
+	product->value[i] == first_factor->value[i] * second_factor->value[i], for i in [0..product->size * product->length - 1]
 */
 void
-mul_hadamard_matrix(struct Matrix *a, struct Matrix *b, struct Matrix *out)
+multiply_matrix_entrywise(struct Matrix *first_factor, struct Matrix *second_factor, struct Matrix *product)
 {
-	int i, N;
+	float *first, *second, *result, *last;
 
-	N = a->size * a->length;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i] * b->value[i];
+	first = first_factor->value;
+	second = second_factor->value;
+	result = product->value;
+	last = product->value + product->size * product->length;
+	for (;result < last;result++, first++, second++)
+		*result = *first * *second;
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix a, b and out
-	a->size == b->size
-	b->size == out->size
-	a->length == b->length
-	b->length == out->length
-   Sideeffect:
-	out->value[i] == a->value[i] / b->value[i], for i in [0, a->size * a->length)
+	previously allocated Matrix dividend, divisor and quotient
+	dividend->size == divisor->size == quotient->size
+	dividend->length == divisor->length == quotient->length
    Postcondition:
-	None
+	quotient->value[i] == dividend->value[i] / divisor->value[i], for i in [0..quotient->size * quotient->length - 1]
 */
 void
-div_hadamard_matrix(struct Matrix *a, struct Matrix *b, struct Matrix *out)
+divide_matrix_entrywise(struct Matrix *dividend, struct Matrix *divisor, struct Matrix *quotient)
 {
-	int i, N;
+	float *first, *second, *result, *last;
 
-	N = a->size * a->length;
-	for (i = 0;i < N;i++)
-		out->value[i] = a->value[i] / b->value[i];
+	first = dividend->value;
+	second = divisor->value;
+	result = quotient->value;
+	last = quotient->value + quotient->size * quotient->length;
+	for (;result < last;result++, first++, second++)
+		*result = *first / *second;
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix m
-	previously allocated Vector in and out
-	m->size == out->size
-	m->length == in->length
-   Sideeffect:
-	out->value[j] == sum of (m->value[j * in->size + i] * in->value[i]) over i, for i in [0, in->size) and j in [0, out->size)
+	previously allocated matrix, vector and product
+	matrix->size == product->size
+	matrix->length == vector->size
    Postcondition:
-	None
+	product->value[j] == sum of (matrix->value[j * vector->size + i] * vector->value[i]) over i, for i in [0..vector->size - 1] and j in [0..product->size - 1]
 */
 void
-mul_matrix_vector(struct Matrix *m, struct Vector *in, struct Vector *out)
+multiply_matrix_vector(struct Matrix *matrix, struct Vector *vector, struct Vector *product)
 {
-	int i, j, N, M;
+	float *first, *second, *result, *N, *M;
 
-	M = out->size;
-	N = in->size;
-	for (j = 0;j < M;j++) {
-		out->value[j] = 0.0f;
-		for (i = 0;i < N;i++)
-			out->value[j] += m->value[j * N + i] * in->value[i];
+	first = matrix->value;
+	N = vector->value + vector->size;
+	M = product->value + product->size;
+	for (result = product->value;result < M;result++) {
+		*result = 0.0f;
+		for (second = vector->value;second < N;second++, first++)
+			*result += *first * *second;
 	}
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix m
-	previously allocated Vector in and out
-	m->size == out->size
-	m->length == in->length
-   Sideeffect:
-	in->value[i] == sum of (out->value[j] * m->value[j * in->size + i] over j, for i in [0, in->size) and j in [0, out->size)
+	previously allocated matrix, vector, product
+	matrix->size == vector->size
+	matrix->length == product->length
    Postcondition:
-	None
+	product->value[j] == sum of (vector->value[i] * matrix->value[i * vector->size + j] over i, for i in [0..vector->size - 1] and j in [0..product->size - 1]
 */
 void
-mul_matrix_vector_reverse(struct Matrix *m, struct Vector *out, struct Vector *in)
+multiply_transformed_matrix_vector(struct Matrix *matrix, struct Vector *vector, struct Vector *product)
 {
-	int i, j, N, M;
+	float *first, *second, *result, *N, *M;
+	int j, size;
 
-	M = out->size;
-	N = in->size;
-	for (i = 0;i < N;i++) {
-		in->value[i] = 0.0f;
-		for (j = 0;j < M;j++)
-			in->value[i] += out->value[j] * m->value[j * N + i];
+	second = matrix->value;
+	M = vector->value + vector->size;
+	N = product->value + product->size;
+	size = product->size;
+	for (result = product->value;result < N;result++, second++) {
+		*result = 0.0f;
+		for (first = vector->value, j = 0;first < M;first++, j += size)
+			*result += *first * *(second + j);
 	}
 	return;
 }
 
 /* Precondition:
-	previously allocated Matrix m
-	previously allocated Vector in and out
-	m->size == out->size
-	m->length == in->length
-   Sideeffect:
-	m->value[j * a->size = i] == b->value[j] * a->value[i], for i in [0, a->size) and j in [0, b->size)
+	previously allocated first_factor, second_factor, product
+	product->size == second_factor->size
+	product->length == first_factor->size
    Postcondition:
-	None
+	product->value[j * product->length + i] == second_factor->value[j] * first_factor->value[i], for i in [0, first_factor->size - 1] and j in [0..second_factor->size - 1]
 */
 void
-mul_vector(struct Vector *a, struct Vector *b, struct Matrix *m)
+multiply_vector(struct Vector *first_factor, struct Vector *second_factor, struct Matrix *product)
 {
-	int i, j, N, M;
+	float *first, *second, *result, *N, *M;
 
-	N = a->size;
-	M = b->size;
-	for (j = 0;j < M;j++) {
-		for (i = 0;i < N;i++)
-			m->value[j * N + i] = b->value[j] * a->value[i];
+	result = product->value;
+	N = first_factor->value + first_factor->size;
+	M = second_factor->value + second_factor->size;
+	for (second = second_factor->value;second < M;second++) {
+		for (first = first_factor->value;first < N;first++, result++)
+			*result = *second * *first;
 	}
 	return;
 }
